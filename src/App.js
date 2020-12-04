@@ -1,26 +1,49 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import SearchBar from './components/SearchBar';
+import ProductTable from './components/ProductTable';
+import ProductRow from './components/ProductRow';
+import products from './data.json';
+import { getAllProducts } from './components/products';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    products: [],
+    search: '',
+  };
+
+  componentDidMount = () => {
+    getAllProducts().then((products) => {
+      this.setState({ products });
+    });
+  };
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  render() {
+    const filteredProducts = this.state.products.filter((el) => {
+      return el.name.toLowerCase().includes(this.state.search.toLowerCase());
+    });
+    console.log(filteredProducts);
+
+    return (
+      <div className="App">
+        <h1>IronStore</h1>
+
+        <SearchBar
+          search={this.state.search}
+          franckAndHugo={this.handleChange}
+        />
+
+        <ProductTable products={filteredProducts} />
+      </div>
+    );
+  }
 }
 
 export default App;
